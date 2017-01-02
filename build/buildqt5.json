@@ -1,24 +1,27 @@
 {
-    "qt5_version": "5.7.1",
+    "qt5_version": "5.7",
     "xsysroot_profile": "qt5build",
     "sysroot": "automatically filled",
     "systmp": "automatically filled",
+    "sources_directory": "automatically filled",
     "num_cpus": "automatically filled",
 
     "qt5_install_prefix": "/usr/local/qt5",
     "qt5_repo_url": "git://code.qt.io/qt/qt5.git",
+    "qt5_clone_dir": "qt5",
 
-    "rpi_tools": "/opt/rpi-tools",
     "rpi_tools_url": "https://github.com/raspberrypi/tools.git /opt/rpi-tools",
+    "rpi_tools": "/opt/rpi-tools",
     "xgcc_path64": "arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin",
+    "xgcc_suffix": "arm-linux-gnueabihf-",
 
     "xsysroot_url": "https://raw.githubusercontent.com/skarbat/xsysroot/master/xsysroot",
 
-    "host_dependencies": "build-essential pkg-config gperf bison ruby time",
+    "host_dependencies": "build-essential perl pkg-config gperf bison ruby time",
     "sysroot_dependencies": "libc6-dev libxcb1-dev libxcb-icccm4-dev libxcb-xfixes0-dev libxcb-image0-dev libxcb-keysyms1-dev libxcomposite-dev libxcb-sync0-dev libxcb-randr0-dev libx11-xcb-dev libxcb-render-util0-dev libxrender-dev libxext-dev libxcb-glx0-dev pkg-config libssl-dev libraspberrypi-dev libfreetype6-dev libxi-dev libcap-dev libwayland-dev libxkbcommon-dev build-essential git-core libfontconfig1-dev libasound2-dev libinput-dev libmtdev-dev libproxy-dev libdirectfb-dev libts-dev libudev-dev libxcb-xinerama0-dev libdbus-1-dev libicu-dev libglib2.0-dev",
 
-    "configure_release": "-opengl es2 -eglfs -xcb -device linux-rasp-pi2-g++ -device-option CROSS_COMPILE={rpi_tools}/{xgcc_path64} -sysroot {sysroot} -opensource -confirm-license -debug -skip qtwayland -prefix {qt5_install_prefix} -pkg-config -no-pch -alsa -no-use-gold-linker -qt-xkbcommon -xkb-config-root /usr/share/X11/xkb -skip qtwebengine -skip qtwebview -nomake tests -nomake examples -verbose -no-warnings-are-errors -qml-debug -optimized-qmake -strip -fontconfig -no-sql-sqlite",
+    "configure_release": "-opengl es2 -eglfs -xcb -device linux-rasp-pi2-g++ -device-option CROSS_COMPILE={rpi_tools}/{xgcc_path64}/{xgcc_suffix} -sysroot {sysroot} -opensource -confirm-license -debug -skip qtwayland -prefix {qt5_install_prefix} -pkg-config -no-pch -alsa -no-use-gold-linker -qt-xkbcommon -xkb-config-root /usr/share/X11/xkb -skip qtwebengine -skip qtwebview -nomake tests -nomake examples -verbose -no-warnings-are-errors -qml-debug -optimized-qmake -strip -fontconfig -no-sql-sqlite",
 
-    "configure_debug": "-opengl es2 -eglfs -xcb -device linux-rasp-pi2-g++ -device-option CROSS_COMPILE={rpi_tools}/{xgcc_path64} -sysroot {sysroot} -opensource -confirm-license -release -skip qtwayland -prefix {qt5_install_prefix} -pkg-config -no-pch -alsa -no-use-gold-linker -qt-xkbcommon -xkb-config-root /usr/share/X11/xkb -skip qtwebengine -skip qtwebview -nomake tests -nomake examples -verbose -no-warnings-are-errors -no-qml-debug -optimized-qmake -strip -fontconfig -no-sql-sqlite"
+    "configure_debug": "-opengl es2 -eglfs -xcb -device linux-rasp-pi2-g++ -device-option CROSS_COMPILE={rpi_tools}/{xgcc_path64}/{xgcc_suffix} -sysroot {sysroot} -opensource -confirm-license -release -skip qtwayland -prefix {qt5_install_prefix} -pkg-config -no-pch -alsa -no-use-gold-linker -qt-xkbcommon -xkb-config-root /usr/share/X11/xkb -skip qtwebengine -skip qtwebview -nomake tests -nomake examples -verbose -no-warnings-are-errors -no-qml-debug -optimized-qmake -strip -fontconfig -no-sql-sqlite"
     
 }

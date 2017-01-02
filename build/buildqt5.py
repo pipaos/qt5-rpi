@@ -43,6 +43,16 @@ if __name__ == '__main__':
     config_file='buildqt5.json'
     builder=BuilderQt5(config_file)
     builder.dump_configuration()
+
+    #builder.clone_repos()
+    #builder.baptize_image()
+    #builder.install_dependencies()
+    #builder.fix_qualified_paths()
+
+    #builder.configure()
+    builder.make()
+    
+    
     sys.exit(0)
 
     

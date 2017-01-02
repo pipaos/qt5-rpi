@@ -22,17 +22,38 @@ class Builder():
         self.config['num_cpus'] = multiprocessing.cpu_count()
         self.config['configure_release'] = self.config['configure_release'].format(**self.config)
         self.config['configure_debug'] = self.config['configure_debug'].format(**self.config)
+        self.config['sources_directory'] ='{}/{}'.format(self.sysroot.query('tmp'), self.config['qt5_clone_dir'])
         self.host_numcpus=multiprocessing.cpu_count()
 
+    def are_sources_cloned(self):
+        return os.path.isdir(self.config['sources_directory'])
+        
     def dump_configuration(self):
         pprint.pprint(self.config)
 
 
-
 class BuilderQt5(Builder):
     
-    def clone_repos():
-        pass
+    def clone_repos(self):
+        if self.are_sources_cloned():
+            print 'QT5 sources already cloned'
+            return True
+
+        command = 'git clone --branch={} {} {}'.format(
+            self.config['qt5_version'],
+            self.config['qt5_repo_url'],
+            self.config['sources_directory'])
+        
+        if os.system(command):
+            print 'Error cloning sources'
+            return False
+
+        command='cd {} ; perl ./init-repository'.format(self.config['sources_directory'])
+        if os.system(command):
+            print 'Error initializing repository'
+            return False
+        
+        return True
         
     def baptize_image(self):
         '''
@@ -53,43 +74,43 @@ class BuilderQt5(Builder):
                 print 'error expanding image size to {}'.format(picute.query('qcow_size'))
                 return False
 
-        return picute.mount()
+        return self.sysroot.mount()
+
+    def install_dependencies(self):
+        # Put the system up to date and install QT5 build dependencies
+        # We might need more, for example TLS and further backends
+        if self.sysroot.execute('apt-get update'):
+            return False
+
+        if self.sysroot.execute('apt-get install -y --no-install-recommends {}'.format(
+                self.config['sysroot_dependencies'])):
+            return False
+
+        return True
 
     def fix_qualified_paths(self):
         # Fix relative symlinks to libdl and libm (so called fixQualifiedPaths in QT jargon)
         # TODO: Use readlink instead of hardcoded destination to .so versioned filename,
         #       but no big deal really. This is a development / builder box.
-        picute.execute('rm -fv /usr/lib/arm-linux-gnueabihf/libdl.so')
-        picute.execute('cp -fv /lib/arm-linux-gnueabihf/libdl.so.2 /usr/lib/arm-linux-gnueabihf/libdl.so')
-        picute.execute('rm -fv /usr/lib/arm-linux-gnueabihf/libm.so')
-        picute.execute('cp -fv /lib/arm-linux-gnueabihf/libm.so.6 /usr/lib/arm-linux-gnueabihf/libm.so')
+        self.sysroot.execute('rm -fv /usr/lib/arm-linux-gnueabihf/libdl.so')
+        self.sysroot.execute('cp -fv /lib/arm-linux-gnueabihf/libdl.so.2 /usr/lib/arm-linux-gnueabihf/libdl.so')
+        self.sysroot.execute('rm -fv /usr/lib/arm-linux-gnueabihf/libm.so')
+        self.sysroot.execute('cp -fv /lib/arm-linux-gnueabihf/libm.so.6 /usr/lib/arm-linux-gnueabihf/libm.so')
         
         # Fix relative path for libudev library. This fixes plugging HID devices on-the-fly
         # The reason for this ugly patch is that "configure" seems to have lost the relative sysroot directory
-        picute.execute('rm -fv /usr/lib/arm-linux-gnueabihf/libudev.so')
+        self.sysroot.execute('rm -fv /usr/lib/arm-linux-gnueabihf/libudev.so')
         os.system ('sudo ln -sfv {}/lib/arm-linux-gnueabihf/libudev.so.1.5.0 ' \
                    '{}/usr/lib/arm-linux-gnueabihf/libudev.so'.format(
-                       picute.query('sysroot'),
-                       picute.query('sysroot')))
-                
-    def install_dependencies(self):
-        # Put the system up to date and install QT5 build dependencies
-        # We might need more, for example TLS and further backends
-        qt5_builddeps='libc6-dev libxcb1-dev libxcb-icccm4-dev libxcb-xfixes0-dev ' \
-            'libxcb-image0-dev libxcb-keysyms1-dev libxcomposite-dev ' \
-            'libxcb-sync0-dev libxcb-randr0-dev libx11-xcb-dev libxcb-render-util0-dev ' \
-            'libxrender-dev libxext-dev libxcb-glx0-dev pkg-config ' \
-            'libssl-dev libraspberrypi-dev libfreetype6-dev libxi-dev libcap-dev ' \
-            'libwayland-dev libxkbcommon-dev build-essential git-core libfontconfig1-dev ' \
-            'libasound2-dev libinput-dev libmtdev-dev libproxy-dev libdirectfb-dev ' \
-            'libts-dev libudev-dev libxcb-xinerama0-dev ' \
-            'libdbus-1-dev libicu-dev libglib2.0-dev '
+                       self.sysroot.query('sysroot'),
+                       self.sysroot.query('sysroot')))
 
-        if picute.execute('apt-get update'):
-            return False
+    def configure(self):
+        command='cd {} && ./configure {}'.format(self.config['sources_directory'], self.config['configure_release'])
+        rc = os.system(command)
+        return os.WEXITSTATUS(rc) == 0
 
-        if picute.execute('apt-get install -y --no-install-recommends {}'.format(qt5_builddeps)):
-                return False
-
-        return True
-
+    def make(self):
+        command='cd {} && make -j {}'.format(self.config['sources_directory'], self.config['num_cpus'])
+        rc = os.system(command)
+        return os.WEXITSTATUS(rc) == 0
