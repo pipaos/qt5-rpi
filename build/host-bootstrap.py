@@ -16,7 +16,7 @@ class BuilderPrepare(Builder):
     def supported_platform(self):
         arch, elf = platform.architecture()
         if not arch=='64bit':
-            print 'Supported platform is 64bit only'
+            print 'Supported host platform is 64bit only'
             return False
     
         return True
@@ -25,7 +25,7 @@ class BuilderPrepare(Builder):
         command='sudo -k -n whoami'
         am_i_root=os.popen(command).read().strip()
         if am_i_root != 'root':
-            print 'please, enable sudo password-less option'
+            print 'please, enable sudo NOPASSWD option'
             return False
         return True
 
@@ -33,8 +33,6 @@ class BuilderPrepare(Builder):
         '''assuming 64 bit platform'''
         env_found=False
         gcc_path='{}/{}'.format(self.config['rpi_tools'], self.config['xgcc_path64'])
-        gcc='arm-linux-gnueabihf-gcc'
-        gplusplus='arm-linux-gnueabihf-g++'
 
         download_command='sudo git clone {}'.format(self.config['rpi_tools_url'])
         if not os.path.isdir(self.config['rpi_tools']):
@@ -51,12 +49,12 @@ class BuilderPrepare(Builder):
                 print gcc_path
             return False
 
-        rc=os.system('{}/{} --version'.format(gcc_path, gcc))
+        rc=os.system('{}/{}gcc --version'.format(gcc_path, self.config['xgcc_suffix']))
         if rc:
             print 'C cross compiler does not seem to run'
             return False
 
-        rc=os.system('{}/{} --version'.format(gcc_path, gplusplus))
+        rc=os.system('{}/{}g++ --version'.format(gcc_path, self.config['xgcc_suffix']))
         if rc:
             print 'C++ cross compiler does not seem to run'
             return False
