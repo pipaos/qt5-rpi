@@ -1,0 +1,135 @@
+#!/usr/bin/env python
+#
+#  The MIT License (MIT)
+#
+#  Copyright (c) 2016-2017 Albert Casals - skarbat@gmail.com
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#  THE SOFTWARE.
+#
+#  build-qt5
+#
+#  Main program to build QT Framework for the RaspberryPI
+#
+#  See the README file for details.
+#
+
+"""
+qt5-build Compile and package QT5 for the RaspberryPI.
+
+Usage:
+  qt5-build compile qt5 (cross | native) (debug | release) [--dry-run] [--baptize] [--bare-tools] [--yes]
+  qt5-build compile webengine (debug | release) [--dry-run] [--yes]
+  qt5-build package [--dry-run]
+  qt5-build show-config
+  qt5-build status
+  qt5-build purge [--dry-run] [--yes]
+
+Options:
+  -h, --help       Show this help screen.
+  -d, --dry-run    Simply display what would be done
+  -s, --status     Display current build status and quit
+"""
+
+import docopt
+import sys
+import time
+
+from build.builder import Builder
+from build.compiler import CompilerQt5, CompilerWebengine
+from pack import qt5, webengine
+
+if __name__ == '__main__':
+
+    args = docopt.docopt(__doc__)
+
+    if args['show-config'] == True:
+        build=Builder()
+        build.dump_configuration()
+        sys.exit(0)
+
+    if args['status'] == True:
+        build=Builder()
+        build.status()
+        sys.exit(0)
+
+    if args['compile'] == True:
+
+        if not args['--yes']:
+            answer=raw_input('Are you sure you want to kick the build? (y/N) ')
+            if not answer in ('y', 'Y'):
+                print 'aborted'
+                sys.exit(1)
+        
+        if args['qt5'] == True:
+            qt5compiler=CompilerQt5(cross=True if args['cross'] else False,
+                                    release=True if args['release'] else False,
+                                    dry_run=True if args['--dry-run'] else False)
+
+            print 'Compiling QT5 cross={} release={} dry_run={} baptize={}'.format(
+                qt5compiler.cross, qt5compiler.release, qt5compiler.dry_run, args['--baptize'])
+
+            print '>>> Build starting at ', time.ctime()
+            qt5compiler.clone_repos()
+            if args['--baptize']:
+                qt5compiler.baptize_image()
+                qt5compiler.install_dependencies()
+
+            qt5compiler.configure(bare=True if args['--bare-tools'] else False)
+            qt5compiler.make()
+            qt5compiler.install()
+            print '>>> Build terminated at ', time.ctime()
+            sys.exit(0)
+
+        if args['webengine'] == True:
+            wecompiler=CompilerWebengine(release=True if args['release'] else False,
+                                         dry_run=True if args['--dry-run'] else False)
+
+            if not wecompiler.is_qt5_ready():
+                print 'QT5 does not seem to be built or installed'
+                sys.exit(1)
+
+            print 'Cross compile webengine'
+            # TODO: apply patches, call qmake, make, make install
+            sys.exit(0)
+
+    if args['package'] == True:
+
+        packager=Builder()
+        if not packager.is_qt5_ready():
+            print 'Cannot package QT5 or webengine'
+            sys.exit(1)
+        
+        print 'Packaging...'
+        qt5.pack_qt5(packager.config['sysroot'],
+                     packager.config['qt5_install_prefix'],
+                     packager.config['qt5_debian_version'],
+                     dry_run=True if args['--dry-run'] else False)
+        
+    if args['purge'] == True:
+
+        if not args['--yes']:
+            answer=raw_input('Are you sure you want to purge QT5 build? (y/N) ')
+            if not answer in ('y', 'Y'):
+                print 'aborted'
+                sys.exit(1)
+
+        cleaner=Builder(dry_run=True if args['--dry-run'] else False)
+        cleaner.purge()
+
+    sys.exit(0)
