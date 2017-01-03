@@ -33,7 +33,7 @@
 qt5-build Compile and package QT5 for the RaspberryPI.
 
 Usage:
-  qt5-build compile qt5 (cross | native) (debug | release) [--dry-run] [--baptize] [--yes]
+  qt5-build compile qt5 (cross | native) (debug | release) [--dry-run] [--baptize] [--bare-tools] [--yes]
   qt5-build compile webengine (debug | release) [--dry-run] [--yes]
   qt5-build package [--dry-run]
   qt5-build show-config
@@ -89,7 +89,8 @@ if __name__ == '__main__':
             if args['--baptize']:
                 qt5compiler.baptize_image()
                 qt5compiler.install_dependencies()
-            qt5compiler.configure()
+
+            qt5compiler.configure(bare=True if args['--bare-tools'] else False)
             qt5compiler.make()
             qt5compiler.install()
             print '>>> Build terminated at ', time.ctime()
