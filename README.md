@@ -5,12 +5,7 @@ This project builds QT5 and QT Webengine debian packages for the RaspberryPI.
 ###Requirements
 
 You will need a powerful - 4 CPU or higher recommended-  Intel 64 bit computer with Debian Jessie.
-The additional software needed will be installed like this:
-
-```
-$ cd build
-$ python host-bootstrap.py
-```
+The additional software needed will be installed by running `./host-bootstrap.py`.
 
 ###Prepare the image
 

@@ -49,8 +49,8 @@ import docopt
 import sys
 import time
 
-from builder import Builder
-from compiler import CompilerQt5, CompilerWebengine
+from build.builder import Builder
+from build.compiler import CompilerQt5, CompilerWebengine
 
 
 if __name__ == '__main__':
@@ -67,47 +67,44 @@ if __name__ == '__main__':
         build.status()
         sys.exit(0)
 
-    if args['compile'] == True and args['qt5'] == True:
-        qt5compiler=CompilerQt5(cross=True if args['cross'] else False,
-                                release=True if args['release'] else False,
-                                dry_run=True if args['--dry-run'] else False)
-
-        print 'Compiling QT5 cross={} release={} dry_run={} baptize={}'.format(
-            qt5compiler.cross, qt5compiler.release, qt5compiler.dry_run, args['--baptize'])
+    if args['compile'] == True:
 
         if not args['--yes']:
             answer=raw_input('Are you sure you want to kick the build? (y/N) ')
             if not answer in ('y', 'Y'):
                 print 'aborted'
                 sys.exit(1)
+        
+        if args['qt5'] == True:
+            qt5compiler=CompilerQt5(cross=True if args['cross'] else False,
+                                    release=True if args['release'] else False,
+                                    dry_run=True if args['--dry-run'] else False)
 
-        print '>>> Build starting at ', time.ctime()
+            print 'Compiling QT5 cross={} release={} dry_run={} baptize={}'.format(
+                qt5compiler.cross, qt5compiler.release, qt5compiler.dry_run, args['--baptize'])
 
-        qt5compiler.clone_repos()
-        if args['--baptize']:
-            qt5compiler.baptize_image()
-            qt5compiler.install_dependencies()
+            print '>>> Build starting at ', time.ctime()
+            qt5compiler.clone_repos()
+            if args['--baptize']:
+                qt5compiler.baptize_image()
+                qt5compiler.install_dependencies()
+            qt5compiler.configure()
+            qt5compiler.make()
+            qt5compiler.install()
+            print '>>> Build terminated at ', time.ctime()
+            sys.exit(0)
 
-        qt5compiler.configure()
-        qt5compiler.make()
-        qt5compiler.install()
+        if args['webengine'] == True:
+            wecompiler=CompilerWebengine(release=True if args['release'] else False,
+                                         dry_run=True if args['--dry-run'] else False)
 
-        print '>>> Build terminated at ', time.ctime()
-        sys.exit(0)
+            if not wecompiler.is_qt5_ready():
+                print 'QT5 does not seem to be built or installed'
+                sys.exit(1)
 
-    if args['compile'] == True and args['webengine'] == True:
-        wecompiler=CompilerWebengine(release=True if args['release'] else False,
-                                     dry_run=True if args['--dry-run'] else False)
-
-        if not wecompiler.is_qt5_ready():
-            print 'QT5 does not seem to be built or installed'
-            sys.exit(1)
-
-        print 'Cross compile webengine'
-
-        # TODO: apply patches, call qmake, make, make install
-
-        sys.exit(0)
+            print 'Cross compile webengine'
+            # TODO: apply patches, call qmake, make, make install
+            sys.exit(0)
 
     if args['package'] == True:
 
