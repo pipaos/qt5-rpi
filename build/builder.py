@@ -1,3 +1,6 @@
+#
+#  Builder class to wrap up all the build stages
+#
 
 import os
 import sys
@@ -8,10 +11,9 @@ import json
 import pprint
 import xsysroot
 
-
 class Builder():
 
-    def __init__(self, config_file):
+    def __init__(self, config_file='qt5-configuration.json'):
         self.config = json.loads(open(config_file, 'r').read())
         self.sysroot = xsysroot.XSysroot(profile=self.config['xsysroot_profile'])
         self._complete_config()
@@ -31,6 +33,8 @@ class Builder():
     def dump_configuration(self):
         pprint.pprint(self.config)
 
+    def status(self):
+        print 'sysroot mounted:', self.sysroot.is_mounted()
 
 class BuilderQt5(Builder):
     

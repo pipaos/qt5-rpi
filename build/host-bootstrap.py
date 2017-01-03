@@ -98,7 +98,7 @@ class BuilderPrepare(Builder):
 
 if __name__ == '__main__':
 
-    prepare=BuilderPrepare('buildqt5.json')
+    prepare=BuilderPrepare()
     checks = [ prepare.supported_platform,
                prepare.sudo_working,
                prepare.cross_compiler,

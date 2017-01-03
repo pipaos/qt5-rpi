@@ -40,8 +40,7 @@ if __name__ == '__main__':
     # build or package
     # native or cross compiled
 
-    config_file='buildqt5.json'
-    builder=BuilderQt5(config_file)
+    builder=BuilderQt5()
     builder.dump_configuration()
 
     #builder.clone_repos()
@@ -51,8 +50,9 @@ if __name__ == '__main__':
 
     #builder.configure()
     #builder.make()
-    builder.install()
-    
+    #builder.install()
+
+    builder.status()
     
     sys.exit(0)
 
