@@ -29,7 +29,6 @@
 #  See the README file for details.
 #
 
-
 """
 qt5-build Compile and package QT5 for the RaspberryPI.
 
