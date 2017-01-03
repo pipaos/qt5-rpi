@@ -121,6 +121,7 @@ class CompilerQt5(Builder):
             configure_opts=self.config['configure_release'] if self.release else self.config['configure_debug']
         else:
             configure_opts=self.config['configure_bare_tools']
+
         if self.cross:
             command='cd {} && ./configure {}'.format(self.config['sources_directory'], configure_opts)
         else:
