@@ -83,3 +83,22 @@ class Builder():
         print 'QT5 installed:', self.is_qt5_installed()
         print 'QT5 cross tools built:', self.are_cross_tools_built()
 
+    def purge(self):
+        clean_sources='sudo rm -rf {sources_directory}'.format(**self.config)
+        clean_binaries='sudo rm -rf {cross_install_dir}'.format(**self.config)
+
+        print '>>>', clean_sources
+        print '>>>', clean_binaries
+
+        if self.dry_run:
+            print 'dry_run - not removing anything'
+            return True
+
+        os.system(clean_sources)
+
+        if self.sysroot.is_mounted():
+            os.system(clean_binaries)
+        else:
+            print 'Warning: sysroot is not mounted - cannot delete binaries'
+
+        self.sysroot.umount()

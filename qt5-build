@@ -38,6 +38,7 @@ Usage:
   qt5-build package [--dry-run]
   qt5-build show-config
   qt5-build status
+  qt5-build purge [--dry-run] [--yes]
 
 Options:
   -h, --help       Show this help screen.
@@ -119,6 +120,15 @@ if __name__ == '__main__':
                      packager.config['qt5_debian_version'],
                      dry_run=True if args['--dry-run'] else False)
         
-        
-        
+    if args['purge'] == True:
+
+        if not args['--yes']:
+            answer=raw_input('Are you sure you want to purge QT5 build? (y/N) ')
+            if not answer in ('y', 'Y'):
+                print 'aborted'
+                sys.exit(1)
+
+        cleaner=Builder(dry_run=True if args['--dry-run'] else False)
+        cleaner.purge()
+
     sys.exit(0)
