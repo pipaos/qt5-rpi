@@ -70,7 +70,7 @@ class Builder():
 
     def is_qt5_ready(self):
         '''
-        Returns true if system is ready to build Webengine
+        Returns true if QT5 has been built and installed in the sysroot
         '''
         return self.are_sources_cloned() and self.is_qt5_installed() and self.are_cross_tools_built()
 

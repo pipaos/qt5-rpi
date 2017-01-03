@@ -35,7 +35,7 @@ qt5-build Compile and package QT5 for the RaspberryPI.
 Usage:
   qt5-build compile qt5 (cross | native) (debug | release) [--dry-run] [--baptize] [--yes]
   qt5-build compile webengine (debug | release) [--dry-run] [--yes]
-  qt5-build package (qt5 | webengine) [--dry-run]
+  qt5-build package [--dry-run]
   qt5-build show-config
   qt5-build status
 
@@ -51,7 +51,7 @@ import time
 
 from build.builder import Builder
 from build.compiler import CompilerQt5, CompilerWebengine
-
+from pack import qt5, webengine
 
 if __name__ == '__main__':
 
@@ -108,13 +108,17 @@ if __name__ == '__main__':
 
     if args['package'] == True:
 
-        if args['qt5']:
-            print 'packaging QT5'
-            sys.exit(0)
-            
-        if args['webengine']:
-            print 'packaging Webengine'
-            sys.exit(0)
-            
+        packager=Builder()
+        if not packager.is_qt5_ready():
+            print 'Cannot package QT5 or webengine'
+            sys.exit(1)
+        
+        print 'Packaging...'
+        qt5.pack_qt5(packager.config['sysroot'],
+                     packager.config['qt5_install_prefix'],
+                     packager.config['qt5_debian_version'],
+                     dry_run=True if args['--dry-run'] else False)
+        
+        
         
     sys.exit(0)

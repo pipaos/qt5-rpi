@@ -14,8 +14,6 @@ import os
 import shutil
 import glob
 
-# This is the version of the Debian package
-qt5_version = '5.7-1'
 
 # This is Debian control file in a skeleton reusable block
 control_skeleton='''
@@ -46,7 +44,7 @@ packages=[
                ],
   
       'pkg_name': 'libqt5webengine',
-      'pkg_version': qt5_version,
+      'pkg_version': 0,
       'pkg_depends': 'libqt5all{}'.format(extra_deps),
       'pkg_description': 'QT5 WebEngine Libraries and basic tools'
   },
@@ -61,7 +59,7 @@ packages=[
                ],
   
       'pkg_name': 'libqt5webengine-dev',
-      'pkg_version': qt5_version,
+      'pkg_version': 0,
       'pkg_depends': 'libqt5webengine',
       'pkg_description': 'QT5 WebEngine Libraries and basic tools'
   }
@@ -69,17 +67,9 @@ packages=[
 ]
 
 
-if __name__ == '__main__':
+def pack_webengine(root_directory, source_directory, qt5_version, dry_run=False):
 
-    if len(sys.argv) < 2:
-        print 'Syntax: webengine-debianize <sysroot directory> <qt directory>'
-        print '        sysroot : pathname of the image mount point'
-        print '        qt directory : pathname inside the root (i.e. /usr/local/qt-v5.4.1)'
-        sys.exit(1)
-    else:
-        root_directory=sys.argv[1]
-        source_directory=sys.argv[2]
-        complete_source='{}/{}'.format(root_directory, source_directory)
+    complete_source='{}/{}'.format(root_directory, source_directory)
 
     # Sanity check
     if not os.path.exists(complete_source):
@@ -87,6 +77,8 @@ if __name__ == '__main__':
         sys.exit(1)
 
     for pkg in packages:
+
+        pkg['pkg_version'] = qt5_version
 
         # allocate a versioned directory name for the package
         versioned_pkg_name = 'pkgs/{}_{}'.format(pkg['pkg_name'], qt5_version)

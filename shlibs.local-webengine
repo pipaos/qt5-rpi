@@ -1,0 +1,4 @@
+libQt5WebEngine 5 libqt5webengine (>= 5.7-1)
+libQt5WebEngineCore 5 libqt5webengine (>= 5.7-1)
+libQt5WebChannel 5 libqt5webengine (>= 5.7-1)
+libQt5WebEngineWidgets 5 libqt5webengine (>= 5.7-1)

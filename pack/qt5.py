@@ -14,8 +14,6 @@ import os
 import shutil
 import glob
 
-# This is the version of the Debian package
-qt5_version = '5.7-1'
 
 # This is Debian control file in a skeleton reusable block
 control_skeleton='''
@@ -51,30 +49,22 @@ packages=[
                    ],
 
       'pkg_name': 'libqt5all',
-      'pkg_version': qt5_version,
+      'pkg_version': 0,
       'pkg_depends': '{}, libraspberrypi0'.format(extra_deps),
       'pkg_description': 'All QT5 Libraries and basic tools' },
 
     { 'fileset': [ 'bin', 'include', 'mkspecs', # FIXME: mkspecs has large number of devices we will never use
                    'lib/*.a', 'lib/*.la', 'lib/*.prl', 'lib/cmake', 'lib/pkgconfig', 'translations' ],
       'pkg_name': 'libqt5all-dev',
-      'pkg_version': qt5_version,
+      'pkg_version': 0,
       'pkg_depends': 'libqt5all, libraspberrypi-dev',
       'pkg_description': 'All QT5 Development files' }
 ]
 
 
-if __name__ == '__main__':
+def pack_qt5(root_directory, source_directory, qt5_version, dry_run=False):
 
-    if len(sys.argv) < 2:
-        print 'Syntax: native-debianize <sysroot directory> <qt directory>'
-        print '        sysroot : pathname of the image mount point'
-        print '        qt directory : pathname inside the root (i.e. /usr/local/qt5)'
-        sys.exit(1)
-    else:
-        root_directory=sys.argv[1]
-        source_directory=sys.argv[2]
-        complete_source='{}/{}'.format(root_directory, source_directory)
+    complete_source='{}/{}'.format(root_directory, source_directory)
 
     # Sanity check
     if not os.path.exists(complete_source):
@@ -82,6 +72,8 @@ if __name__ == '__main__':
         sys.exit(1)
 
     for pkg in packages:
+
+        pkg['pkg_version'] = qt5_version
 
         # allocate a versioned directory name for the package
         versioned_pkg_name = 'pkgs/{}_{}'.format(pkg['pkg_name'], qt5_version)
@@ -97,28 +89,36 @@ if __name__ == '__main__':
             target_files_path='{}/{}'.format(target_directory, last_path)
 
             print 'Extracting {} into {}...'.format(os.path.join(complete_source, files), target_files_path)
-            if not os.path.exists(target_files_path):
+            if not os.path.exists(target_files_path) and not dry_run:
                 os.makedirs(target_files_path)
 
-            os.system('cp -rvP {} {}'.format(os.path.join(complete_source, files), target_files_path))
+            if not dry_run:
+                os.system('cp -rvP {} {}'.format(os.path.join(complete_source, files), target_files_path))
 
         # Cleanup anything related to webengine
-        cmd='find ' + target_files_path + ' -iname \*webengine\* -exec rm -rfv {} \;'
-        os.system(cmd)
+        if not dry_run:
+            cmd='find ' + target_files_path + ' -iname \*webengine\* -exec rm -rfv {} \;'
+            os.system(cmd)
 
         # create the Debian control file for "dpkg-deb" tool to know what to pack
-        debian_dir=os.path.join(versioned_pkg_name, 'DEBIAN')
-        if not os.path.exists(debian_dir):
-            os.makedirs(debian_dir)
-        with open(os.path.join(debian_dir, 'control'), 'w') as control_file:
-            control_file.writelines(control_skeleton.format(**pkg))
+        if not dry_run:
+            debian_dir=os.path.join(versioned_pkg_name, 'DEBIAN')
+            if not os.path.exists(debian_dir):
+                os.makedirs(debian_dir)
+            with open(os.path.join(debian_dir, 'control'), 'w') as control_file:
+                control_file.writelines(control_skeleton.format(**pkg))
 
         # copy the shlibs file for the runtime package
-        if pkg['pkg_name'] == 'libqt5all':
-            os.system('cp -v {} {}/shlibs'.format('shlibs.local-qt5', debian_dir))
+        if not dry_run:
+            if pkg['pkg_name'] == 'libqt5all':
+                os.system('cp -v {} {}/shlibs'.format('shlibs.local-qt5', debian_dir))
 
         # finally call dpkg-deb and generate a debian package
-        rc=os.system('dpkg-deb --build {}'.format(versioned_pkg_name))
+        if not dry_run:
+            rc=os.system('dpkg-deb --build {}'.format(versioned_pkg_name))
+        else:
+            rc=0
+
         if not rc:
             print 'Package {} created correctly'.format(versioned_pkg_name)
         else:
