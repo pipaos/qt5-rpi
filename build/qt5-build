@@ -22,17 +22,84 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 #
-#  build-qt5.py
+#  build-qt5
 #
 #  Main program to build QT Framework for the RaspberryPI
 #
 #  See the README file for details.
 #
 
+
+"""
+qt5-build Compile and package QT5 for the RaspberryPI.
+
+Usage:
+  qt5-build compile qt5 (cross | native) (debug | release) [--dry-run] [--baptize] [--yes]
+  qt5-build compile webengine (debug | release) [--dry-run]
+  qt5-build package (qt5 | webengine) [--dry-run]
+  qt5-build show-config
+  qt5-build status
+
+Options:
+  -h, --help       Show this help screen.
+  -d, --dry-run    Simply display what would be done
+  -s, --status     Display current build status and quit
+"""
+
+import docopt
 import sys
-from builder import Builder, BuilderQt5
+import time
+
+from builder import Builder, BuilderQt5, BuilderWebengine
 
 if __name__ == '__main__':
+
+    args = docopt.docopt(__doc__)
+
+    #builder=BuilderQt5(dry_run=args['--dry-run'])
+    if args['show-config'] == True:
+        builder=Builder()
+        builder.dump_configuration()
+        sys.exit(0)
+
+    if args['status'] == True:
+        builder=Builder()
+        builder.status()
+        sys.exit(0)
+
+    if args['compile'] == True and args['qt5'] == True:
+        builder=BuilderQt5(cross=True if args['cross'] else False,
+                           release=True if args['release'] else False,
+                           dry_run=True if args['--dry-run'] else False)
+
+        print 'Compiling QT5 cross={} release={} dry_run={} baptize={}'.format(
+            builder.cross, builder.release, builder.dry_run, args['--baptize'])
+
+        if not args['--yes']:
+            answer=raw_input('Are you sure you want to kick the build? (y/N) ')
+            if not answer in ('y', 'Y'):
+                print 'aborted'
+                sys.exit(1)
+
+        print '>>> Build starting at ', time.ctime()
+
+        builder.clone_repos()
+        if args['--baptize']:
+            builder.baptize_image()
+            builder.install_dependencies()
+
+        builder.configure()
+        builder.make()
+        builder.install()
+
+        print '>>> Build terminated at ', time.ctime()
+        sys.exit(0)
+
+    if args['compile'] == True and args['webengine'] == True:
+        print 'Cross compile webengine'
+        sys.exit(0)
+
+    sys.exit(0)
 
     # specify
     # qt5 or webengine
@@ -46,13 +113,11 @@ if __name__ == '__main__':
     #builder.clone_repos()
     #builder.baptize_image()
     #builder.install_dependencies()
-    #builder.fix_qualified_paths()
 
     #builder.configure()
     #builder.make()
     #builder.install()
 
-    builder.status()
     
     sys.exit(0)
 
