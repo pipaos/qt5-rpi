@@ -7,6 +7,26 @@ This project builds QT5 and QT Webengine debian packages for the RaspberryPI.
 You will need a powerful - 4 CPU or higher recommended-  Intel 64 bit computer with Debian Jessie.
 The additional software needed will be installed by running `./host-bootstrap.py`.
 
+###Build
+
+Build the basic native tools:
+
+```
+$ ./qt5-build compile qt5 native release --baptize --bare-tools
+```
+
+Cross build the QT5 framework, with cross-compiled qmake tools:
+
+```
+$ ./qt5-build compile qt5 cross release --baptize
+```
+
+Cross build Webengine:
+
+```
+$ ./qt5-build compile webengine
+```
+
 ###Prepare the image
 
 Now get the pipaOS image ready, the so called sysroot.
