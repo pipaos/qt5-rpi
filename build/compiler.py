@@ -159,18 +159,17 @@ class CompilerQt5(Builder):
 
         if self.dry_run:
             print '>>>', command
-            print 'qtconfig >>>\n', qtconfig
             return True
 
         rc = os.system(command)
         if not rc and self.cross:
             # TODO: Make this simpler
             qtconfig_file='{qt5_cross_qt_conf}'.format(**self.config)
-            qtconfig_temp='/tmp/qtconfig'
+            qtconfig_temp='qt.conf'
             with open (qtconfig_temp, 'w') as f:
                 f.write(qtconfig)
 
-            os.system('sudo cp -fv /tmp/qtconfig {qt5_cross_qt_conf}'.format(**self.config))
+            os.system('sudo cp -fv qt.conf {qt5_cross_qt_conf}'.format(**self.config))
 
         return os.WEXITSTATUS(rc) == 0
 
