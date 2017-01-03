@@ -114,3 +114,8 @@ class BuilderQt5(Builder):
         command='cd {} && make -j {}'.format(self.config['sources_directory'], self.config['num_cpus'])
         rc = os.system(command)
         return os.WEXITSTATUS(rc) == 0
+
+    def install(self):
+        command='cd {} && sudo make install'.format(self.config['sources_directory'])
+        rc = os.system(command)
+        return os.WEXITSTATUS(rc) == 0

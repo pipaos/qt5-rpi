@@ -50,7 +50,8 @@ if __name__ == '__main__':
     #builder.fix_qualified_paths()
 
     #builder.configure()
-    builder.make()
+    #builder.make()
+    builder.install()
     
     
     sys.exit(0)
