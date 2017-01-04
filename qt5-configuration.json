@@ -8,6 +8,7 @@
     "cross_install_dir": "automatically filled",
     "qt5_cross_qt_conf": "automatically filled",
     "num_cpus": "automatically filled",
+    "qmake_env": "automatically filled",
 
     "qt5_install_prefix": "/usr/local/qt5",
     "qt5_cross_binaries": "bin-x86-64",

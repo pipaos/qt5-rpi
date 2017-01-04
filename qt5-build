@@ -113,7 +113,10 @@ if __name__ == '__main__':
                 sys.exit(1)
 
             print 'Cross compile webengine'
-            # TODO: apply patches, call qmake, make, make install
+            wecompiler.apply_patches()
+            wecompiler.qmake()
+            wecompiler.make()
+            wecompiler.install()
             sys.exit(0)
 
     if args['package'] == True:

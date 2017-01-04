@@ -65,6 +65,7 @@ class Builder():
         self.config['configure_release'] = self.config['configure_release'].format(**self.config)
         self.config['configure_debug'] = self.config['configure_debug'].format(**self.config)
         self.config['configure_core_tools'] = self.config['configure_core_tools'].format(**self.config)
+        self.config['qmake_env'] = 'PATH=$PATH:{sysroot}/{qt5_install_prefix}/{qt5_cross_binaries}'.format(**self.config)
 
         self.host_numcpus=multiprocessing.cpu_count()
 

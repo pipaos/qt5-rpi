@@ -181,4 +181,43 @@ class CompilerQt5(Builder):
 
 
 class CompilerWebengine(Builder):
-    pass
+
+    def apply_patches(self):
+        patches_dir='patches/qtwebengine'
+        if os.path.isdir('patches/qtwebengine'):
+            print '>>> applying patches'
+            cmd='cp -frv {}/* {}/qtwebengine'.format(patches_dir, self.config['sources_directory'])
+            if self.dry_run:
+                print '>>>', cmd
+                return True
+            else:
+                return os.WEXITSTATUS(os.system(cmd))
+
+    def qmake(self):
+        qmake_cmd='{}; cd {}/qtwebengine && qmake ' \
+            'WEBENGINE_CONFIG+=use_proprietary_codecs CONFIG+={}'.format(
+                self.config['qmake_env'],
+                self.config['sources_directory'],
+                'release' if self.release else 'debug')
+
+        if self.dry_run:
+            print 'qmake >>>', qmake_cmd
+            return True
+        else:
+            return os.WEXITSTATUS(os.system(qmake_cmd))
+
+    def make(self):
+        make_cmd='{qmake_env}; cd {sources_directory}/qtwebengine && make -j {num_cpus}'.format(**self.config)
+        if self.dry_run:
+            print 'make >>>', make_cmd
+            return True
+        else:
+            return os.WEXITSTATUS(os.system(make_cmd))
+
+    def install(self):
+        install_cmd='{qmake_env}; cd {sources_directory}/qtwebengine && sudo make install'.format(**self.config)
+        if self.dry_run:
+            print 'install >>>', install_cmd
+            return True
+        else:
+            return os.WEXITSTATUS(os.system(install_cmd))
