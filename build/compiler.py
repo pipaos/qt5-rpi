@@ -125,7 +125,8 @@ class CompilerQt5(Builder):
         if self.cross:
             command='cd {} && ./configure {}'.format(self.config['sources_directory'], configure_opts)
         else:
-            command='xsysroot -x "/bin/bash -c \'cd /tmp/{} && ./configure {}\'"'.format(self.config['qt5_clone_dir'], configure_opts)
+            command='xsysroot -x "/bin/bash -c \'cd /tmp/{} && ./configure {}\'"'.format(
+                self.config['qt5_clone_dir'], configure_opts)
 
         if self.dry_run:
             print '>>>', command
