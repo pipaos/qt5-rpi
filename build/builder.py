@@ -53,7 +53,7 @@ class Builder():
         self.config['num_cpus'] = multiprocessing.cpu_count()
         self.config['configure_release'] = self.config['configure_release'].format(**self.config)
         self.config['configure_debug'] = self.config['configure_debug'].format(**self.config)
-        self.config['configure_bare_tools'] = self.config['configure_debug'].format(**self.config)
+        self.config['configure_bare_tools'] = self.config['configure_bare_tools'].format(**self.config)
         self.config['sources_directory'] ='{}/{}'.format(self.sysroot.query('tmp'), self.config['qt5_clone_dir'])
         self.config['cross_install_dir']='{}/{}'.format(self.sysroot.query('sysroot'), self.config['qt5_install_prefix'])
         self.config['qt5_cross_qt_conf']='{sysroot}/{qt5_install_prefix}/{qt5_cross_binaries}/qt.conf'.format(**self.config)
@@ -64,6 +64,9 @@ class Builder():
 
     def is_qt5_installed(self):
         return os.path.isdir(self.config['cross_install_dir'])
+
+    def is_sysroot_mounted(self):
+        return self.sysroot.is_mounted()
 
     def are_cross_tools_built(self):
         x64bins='{cross_install_dir}/{qt5_cross_binaries}'.format(**self.config)
