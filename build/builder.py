@@ -59,7 +59,7 @@ class Builder():
             # Native compilation needs to make QT5 believe the cross compiler is the local one
             self.config['rpi_tools'] = ''
             self.config['xgcc_path64'] = ''
-            self.config['xgcc_suffix'] = '/usr/bin'
+            self.config['xgcc_suffix'] = '/usr/bin/'
             self.config['sysroot'] = '/'
 
         self.config['configure_release'] = self.config['configure_release'].format(**self.config)
