@@ -116,9 +116,9 @@ class CompilerQt5(Builder):
                        self.sysroot.query('sysroot'),
                        self.sysroot.query('sysroot')))
 
-    def configure(self, bare_tools=False):
-        if bare_tools:
-            configure_opts=self.config['configure_bare_tools']
+    def configure(self, core_tools=False):
+        if core_tools:
+            configure_opts=self.config['configure_core_tools']
         else:
             configure_opts=self.config['configure_release'] if self.release else self.config['configure_debug']
 

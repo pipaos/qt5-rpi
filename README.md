@@ -9,82 +9,48 @@ The additional software needed will be installed by running `./host-bootstrap.py
 
 ###Build
 
-Build the basic native tools:
-
-```
-$ ./qt5-build compile qt5 native release --baptize --bare-tools
-```
-
-Cross build the QT5 framework, with cross-compiled qmake tools:
+Build everything with these commands:
 
 ```
 $ ./qt5-build compile qt5 cross release --baptize
+$ ./qt5-build compile webengine release
+$ ./qt5-build package qt5
+$ ./qt5-build package webengine
+$ ./qt5-build package cross-tools
+$ ./qt5-build purge
+$ ./qt5-build compile qt5 native release --bare-tools
+$ ./qt5-build package native-tools
 ```
 
-Cross build Webengine:
+Will build and debianize everything into the `pkgs` folder:
+
+ * libqt5all.deb
+ * libqtwebengine.deb
+ * libqt5all-dev.deb
+ * libqtwebengine-dev.deb
+ * libqt5-tools-native.deb
+ * libqt5-tools-x64.deb
+
+###Development
+
+QT5 and Webenegine apps can be compiled using the packages above, in 2 ways: native or cross compiled.
+
+####Native compilation
+
+You will need a RaspberryPI or a Rasbian based sysroot. Install the the `-dev` packages along
+with libqt5-tools-native.deb. Set your `PATH` to point to `/usr/local/qt5/bin`. You are now ready to build.
+
+####Cross compilation
+
+You will need a Debian x64 system and a Rasbian based sysroot. Run the command `host-bootstrap`,
+then setup the sysroot image. Install the `-dev` packages on the sysroot.
+Then set your `PATH` on the Host to reach qmake:
 
 ```
-$ ./qt5-build compile webengine
+$ export PATH=$PATH:$(xsysroot -q sysroot)/usr/local/qt5/bin-x86-64`
 ```
 
-###Prepare the image
-
-Now get the pipaOS image ready, the so called sysroot.
-
-```
-$ mkdir ~/osimages ~/xtmp
-$ cd ~/osimages && wget http://pipaos.mitako.eu/download/pipaos-lulo-xgui-4.4.img.gz
-$ gunzip pipaos-lulo-xgui-4.4.img.gz
-```
-
-Copy the file `xsysroot.conf` to your home directory, then call `xsysroot -p picute -s`.
-
-###Build
-
-Picute.py will take hands, install QT5 dependencies on the sysroot and cross-build QT5 on it:
-
-```
- $ ./buildme
-```
-
-All QT5 source code will be cloned into your `~/xtmp` folder, which sits on the host.
-Once the build is complete, you will not want this anymore.
-
-###Webengine
-
-Once the buildme script has completed QT5, you can now build the Webengine.
-
-```
-$ python -u piwebengine.py picute > webengine.log 2>&1
-```
-
-Webengine build takes a long time. On successfeul completion it will have been installed inside the image.
-
-###Cross compile your apps
-
-On your Intel host computer, you'll need to mount the Picute image with `xsysroot -m`.
-Then, add `/tmp/picute/usr/local/qt5.5/bin` to your path.
-
-Now from your QT5 project sources, simply call `qmake` followed by `make`,
-and it should build the app ready to run on Picute.
-
-An alternative to having the Picute image on your Intel computer,
-is to boot Picute on a networked RaspberryPI, and remote mount the sysroot, like this:
-
-`
- $ mkdir /tmp/picute && sudo sshfs -o allow_other sysop@picute-ip-address:/ /tmp/picute
-`
-
-Pass `posys` for the network password.
-
-##Webengine 5.7.1 dependencies
-
-The following webengine dependencies can be installed manually:
-
- * http://httpredir.debian.org/debian/pool/main/f/ffmpeg/libavutil55_3.2-2~bpo8+2_armhf.deb
- * http://httpredir.debian.org/debian/pool/main/f/ffmpeg/libavcodec57_3.2-2~bpo8+2_armhf.deb
- * http://httpredir.debian.org/debian/pool/main/f/ffmpeg/libavformat57_3.2-2~bpo8+2_armhf.deb
- * http://httpredir.debian.org/debian/pool/main/libv/libvpx/libvpx4_1.6.0-2~bpo8+1_armhf.deb
+You are now ready to build from the host.
 
 ###References
 

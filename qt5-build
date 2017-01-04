@@ -33,17 +33,20 @@
 qt5-build Compile and package QT5 for the RaspberryPI.
 
 Usage:
-  qt5-build compile qt5 (cross | native) (debug | release) [--dry-run] [--baptize] [--bare-tools] [--yes]
+  qt5-build compile qt5 (cross | native) (debug | release) [--baptize] [--core-tools] [--dry-run] [--yes]
   qt5-build compile webengine (debug | release) [--dry-run] [--yes]
-  qt5-build package [--dry-run]
+  qt5-build package (qt5 | webengine | cross-tools | native-tools) [--dry-run]
+  qt5-build purge [--dry-run] [--yes]
   qt5-build show-config
   qt5-build status
-  qt5-build purge [--dry-run] [--yes]
 
 Options:
-  -h, --help       Show this help screen.
-  -d, --dry-run    Simply display what would be done
-  -s, --status     Display current build status and quit
+  -h, --help         Show this help screen.
+  -b, --baptize      Renew the sysroot image to start from clean
+  -c, --core-tools   Build only the basic QT5 build tools
+  -d, --dry-run      Simply display what would be done
+  -y, --yes          Skip confirmation for long compilation steps
+
 """
 
 import docopt
@@ -95,7 +98,7 @@ if __name__ == '__main__':
                 qt5compiler.baptize_image()
                 qt5compiler.install_dependencies()
 
-            qt5compiler.configure(bare_tools=True if args['--bare-tools'] else False)
+            qt5compiler.configure(core_tools=True if args['--core-tools'] else False)
             qt5compiler.make()
             qt5compiler.install()
             print '>>> Build terminated at ', time.ctime()
