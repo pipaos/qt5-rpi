@@ -113,5 +113,3 @@ class Builder():
             os.system(clean_binaries)
         else:
             print 'Warning: sysroot is not mounted - cannot delete binaries'
-
-        self.sysroot.umount()
