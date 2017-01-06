@@ -130,6 +130,7 @@ if __name__ == '__main__':
         if args['qt5']:
             qt5.pack_qt5(packager.config['sysroot'],
                          packager.config['qt5_install_prefix'],
+                         packager.config['qt5_debian_name_prefix'],
                          packager.config['qt5_debian_version'],
                          dry_run=True if args['--dry-run'] else False)
 
@@ -138,17 +139,20 @@ if __name__ == '__main__':
         elif args['webengine']:
             webengine.pack_webengine(packager.config['sysroot'],
                                      packager.config['qt5_install_prefix'],
+                                     packager.config['qt5_debian_name_prefix'],
                                      packager.config['qt5_debian_version'],
                                      dry_run=True if args['--dry-run'] else False)
         elif args['cross-tools']:
             cross_tools.pack_tools(packager.config['sysroot'],
                                    packager.config['qt5_install_prefix'],
+                                   packager.config['qt5_debian_name_prefix'],
                                    packager.config['qt5_debian_version'],
                                    packager.config['qt5_cross_binaries'],
                                    dry_run=True if args['--dry-run'] else False)
         elif args['native-tools']:
             native_tools.pack_tools(packager.config['sysroot'],
                                     packager.config['qt5_install_prefix'],
+                                    packager.config['qt5_debian_name_prefix'],
                                     packager.config['qt5_debian_version'],
                                     'bin',
                                     dry_run=True if args['--dry-run'] else False)
