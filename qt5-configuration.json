@@ -1,6 +1,7 @@
 {
     "qt5_version": "5.7",
     "qt5_debian_version": "5.7-2",
+    "qt5_debian_name_prefix": "pipaos-",
     "xsysroot_profile": "qt5build",
     "sysroot": "automatically filled",
     "systmp": "automatically filled",
