@@ -55,7 +55,7 @@ import time
 
 from build.builder import Builder
 from build.compiler import CompilerQt5, CompilerWebengine
-from pack import qt5, webengine
+from pack import qt5, webengine, cross_tools, native_tools
 
 if __name__ == '__main__':
 
@@ -140,7 +140,19 @@ if __name__ == '__main__':
                                      packager.config['qt5_install_prefix'],
                                      packager.config['qt5_debian_version'],
                                      dry_run=True if args['--dry-run'] else False)
-        
+        elif args['cross-tools']:
+            cross_tools.pack_tools(packager.config['sysroot'],
+                                   packager.config['qt5_install_prefix'],
+                                   packager.config['qt5_debian_version'],
+                                   packager.config['qt5_cross_binaries'],
+                                   dry_run=True if args['--dry-run'] else False)
+        elif args['native-tools']:
+            native_tools.pack_tools(packager.config['sysroot'],
+                                    packager.config['qt5_install_prefix'],
+                                    packager.config['qt5_debian_version'],
+                                    'bin',
+                                    dry_run=True if args['--dry-run'] else False)
+
     if args['purge'] == True:
 
         if not args['--yes']:
