@@ -23,6 +23,38 @@ Description: {pkg_description}
 
 '''
 
+postinst_script='''
+#!/bin/bash
+
+case "$1" in
+    configure)
+       ln -sf /usr/local/qt5/bin/qmake /usr/bin/qmake
+       mkdir -p mkdir -p /opt/rpi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/
+       ln -sf /usr/bin/gcc /opt/rpi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-gcc
+       ln -sf /usr/bin/g++ /opt/rpi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-g++
+       ;;
+esac
+
+#DEBHELPER#
+
+exit 0
+'''
+
+postrm_script='''
+#!/bin/bash
+
+case "$1" in
+    remove|upgrade)
+       rm -f /usr/bin/qmake
+       rm -rf /opt/rpi-tools
+       ;;
+esac
+
+#DEBHELPER#
+
+exit 0
+'''
+
 extra_deps = ''
 
 # These are the packages we are building
@@ -78,6 +110,18 @@ def pack_tools(root_directory, source_directory, qt5_version, tools_directory, d
                 os.makedirs(debian_dir)
             with open(os.path.join(debian_dir, 'control'), 'w') as control_file:
                 control_file.writelines(control_skeleton.format(**pkg))
+
+        # package postinst & postrm scripts - resolve qmake PATH and native build for qmake
+        if not dry_run:
+            postinst_filename='{}/postinst'.format(debian_dir)
+            postrm_filename='{}/postrm'.format(debian_dir)
+            with open(postinst_filename, 'w') as f:
+                f.write(postinst_script)
+                os.system('chmod ugo+rx {}'.format(postinst_filename))
+
+            with open(postrm_filename, 'w') as f:
+                f.write(postrm_script)
+                os.system('chmod ugo+rx {}'.format(postrm_filename))
 
         # finally call dpkg-deb and generate a debian package
         if not dry_run:

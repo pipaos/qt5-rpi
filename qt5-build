@@ -108,8 +108,8 @@ if __name__ == '__main__':
             wecompiler=CompilerWebengine(release=True if args['release'] else False,
                                          dry_run=True if args['--dry-run'] else False)
 
-            if not wecompiler.is_qt5_ready():
-                print 'QT5 does not seem to be built or installed'
+            if not wecompiler.are_cross_tools_built():
+                print 'QT5 does not seem to be built or installed - is sysroot mounted?'
                 sys.exit(1)
 
             print 'Cross compile webengine'
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     if args['package'] == True:
 
         packager=Builder()
-        if not packager.is_qt5_ready():
+        if not packager.is_qt5_installed():
             print 'Cannot package QT5 or webengine'
             sys.exit(1)
         

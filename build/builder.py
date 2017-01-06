@@ -82,12 +82,6 @@ class Builder():
         x64bins='{cross_install_dir}/{qt5_cross_binaries}'.format(**self.config)
         return os.path.isdir(x64bins)
 
-    def is_qt5_ready(self):
-        '''
-        Returns true if QT5 has been built and installed in the sysroot
-        '''
-        return self.are_sources_cloned() and self.is_qt5_installed() and self.are_cross_tools_built()
-
     def dump_configuration(self):
         pprint.pprint(self.config, indent=2)
 
