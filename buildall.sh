@@ -13,7 +13,7 @@
 
 if [ "$1" == "cross" ]; then
     # takes about 1 hour on a 8 CPU 2GHz host
-    logfile="buildall-cross.log"
+    logfile="qt5-buildall-cross.log"
     echo "Cross compilation of QT5 and Webengine"
     echo "Follow progress at $logfile ..."
     ./qt5-build purge --yes > $logfile 2>&1
@@ -25,11 +25,11 @@ if [ "$1" == "cross" ]; then
     exit 0
 else if [ "$1" == "native" ]; then
 	 # takes about 1.5 hours on a 8 CPU 2GHz host
-	 logfile="buildall-native.log"
+	 logfile="qt5-buildall-native.log"
 	 echo "Native compilation of QT5 core tools"
 	 echo "Follow progress at $logfile ..."
 	 ./qt5-build purge --yes > $logfile 2>&1
-	 ./qt5-build compile qt5 native debug --yes >> $logfile 2>&1
+	 ./qt5-build compile qt5 native release --core-tools --yes >> $logfile 2>&1
 	 ./qt5-build package native-tools >> $logfile 2>&1
 	 exit 0
      else
