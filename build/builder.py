@@ -51,12 +51,22 @@ class Builder():
         self.config['sysroot'] = self.sysroot.query('sysroot')
         self.config['systmp'] = self.sysroot.query('tmp')
         self.config['num_cpus'] = multiprocessing.cpu_count()
-        self.config['configure_release'] = self.config['configure_release'].format(**self.config)
-        self.config['configure_debug'] = self.config['configure_debug'].format(**self.config)
-        self.config['configure_bare_tools'] = self.config['configure_bare_tools'].format(**self.config)
         self.config['sources_directory'] ='{}/{}'.format(self.sysroot.query('tmp'), self.config['qt5_clone_dir'])
         self.config['cross_install_dir']='{}/{}'.format(self.sysroot.query('sysroot'), self.config['qt5_install_prefix'])
         self.config['qt5_cross_qt_conf']='{sysroot}/{qt5_install_prefix}/{qt5_cross_binaries}/qt.conf'.format(**self.config)
+
+        if not self.cross:
+            # Native compilation needs to make QT5 believe the cross compiler is the local one
+            self.config['rpi_tools'] = ''
+            self.config['xgcc_path64'] = ''
+            self.config['xgcc_suffix'] = '/usr/bin/'
+            self.config['sysroot'] = '/'
+
+        self.config['configure_release'] = self.config['configure_release'].format(**self.config)
+        self.config['configure_debug'] = self.config['configure_debug'].format(**self.config)
+        self.config['configure_core_tools'] = self.config['configure_core_tools'].format(**self.config)
+        self.config['qmake_env'] = 'PATH=$PATH:{sysroot}/{qt5_install_prefix}/{qt5_cross_binaries}'.format(**self.config)
+
         self.host_numcpus=multiprocessing.cpu_count()
 
     def are_sources_cloned(self):
@@ -104,5 +114,3 @@ class Builder():
             os.system(clean_binaries)
         else:
             print 'Warning: sysroot is not mounted - cannot delete binaries'
-
-        self.sysroot.umount()
