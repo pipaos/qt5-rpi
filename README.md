@@ -5,52 +5,46 @@ This project builds QT5 and QT Webengine debian packages for the RaspberryPI.
 ###Requirements
 
 You will need a powerful - 4 CPU or higher recommended-  Intel 64 bit computer with Debian Jessie.
-The additional software needed will be installed by running `./host-bootstrap.py`.
+The additional software needed on the host will be installed by running `./host-bootstrap.py`.
 
 ###Build
 
-Build everything with these commands:
+Build is separated in two stages.
 
-```
-$ ./qt5-build compile qt5 cross release --baptize
-$ ./qt5-build compile webengine release
-$ ./qt5-build package qt5
-$ ./qt5-build package webengine
-$ ./qt5-build package cross-tools
-$ ./qt5-build purge
-$ ./qt5-build compile qt5 native release --bare-tools
-$ ./qt5-build package native-tools
-```
+Cross compilation of QT5, webengine and cross compilation tools: `buildall.sh cross`,
+and native compilation of the core tools, for the RaspberryPI: `buildall.sh native`.
 
-Will build and debianize everything into the `pkgs` folder:
+On completion, the `pkgs` directory will contain the Debian files to publish on the repository.
 
  * libqt5all.deb
  * libqtwebengine.deb
  * libqt5all-dev.deb
  * libqtwebengine-dev.deb
- * libqt5-tools-native.deb
- * libqt5-tools-x64.deb
+ * libqt5-native-tools.deb
+ * libqt5-cross-tools.deb
 
 ###Development
 
-QT5 and Webenegine apps can be compiled using the packages above, in 2 ways: native or cross compiled.
+QT5 and Webenegine apps can be compiled using the packages above, in two different ways: native or cross compiled.
 
 ####Native compilation
 
-You will need a RaspberryPI or a Rasbian based sysroot. Install the the `-dev` packages along
-with libqt5-tools-native.deb. Set your `PATH` to point to `/usr/local/qt5/bin`. You are now ready to build.
+You will need a RaspberryPI or a Rasbian based sysroot. Install the `-dev` packages on the sysroot along
+with native tools package. Set your `PATH` to point to `/usr/local/qt5/bin`. You are now ready to build.
 
 ####Cross compilation
 
-You will need a Debian x64 system and a Rasbian based sysroot. Run the command `host-bootstrap`,
-then setup the sysroot image. Install the `-dev` packages on the sysroot.
-Then set your `PATH` on the Host to reach qmake:
+You will need a Debian Jessie x64 system and a Rasbian based sysroot. Run the command `host-bootstrap` on the host.
+Mount the sysroot image and install the `-dev` packages in it along with the cross tools package.
+Set your `PATH` on the Host to reach qmake:
 
 ```
 $ export PATH=$PATH:$(xsysroot -q sysroot)/usr/local/qt5/bin-x86-64`
 ```
 
-You are now ready to build from the host.
+You might need to set the correct path to the sysroot in the file `/usr/local/qt5/bin-x86-64/qt.conf`
+
+You are now ready to cross build QT5 apps from the host.
 
 ###References
 
@@ -73,4 +67,4 @@ You are now ready to build from the host.
  * https://info-beamer.com/blog/raspberry-pi-hardware-video-scaler
  * https://forum.qt.io/topic/48223/webengine-raspberry-pi/2
 
-Albert Casals, February 2016.
+Albert Casals - 2016-2017
