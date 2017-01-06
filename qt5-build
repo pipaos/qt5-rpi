@@ -127,10 +127,19 @@ if __name__ == '__main__':
             sys.exit(1)
         
         print 'Packaging...'
-        qt5.pack_qt5(packager.config['sysroot'],
-                     packager.config['qt5_install_prefix'],
-                     packager.config['qt5_debian_version'],
-                     dry_run=True if args['--dry-run'] else False)
+        if args['qt5']:
+            qt5.pack_qt5(packager.config['sysroot'],
+                         packager.config['qt5_install_prefix'],
+                         packager.config['qt5_debian_version'],
+                         dry_run=True if args['--dry-run'] else False)
+
+            # TODO: package cross-tools and native-tools
+
+        elif args['webengine']:
+            webengine.pack_webengine(packager.config['sysroot'],
+                                     packager.config['qt5_install_prefix'],
+                                     packager.config['qt5_debian_version'],
+                                     dry_run=True if args['--dry-run'] else False)
         
     if args['purge'] == True:
 

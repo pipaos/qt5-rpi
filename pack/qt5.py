@@ -53,7 +53,7 @@ packages=[
       'pkg_depends': '{}, libraspberrypi0'.format(extra_deps),
       'pkg_description': 'All QT5 Libraries and basic tools' },
 
-    { 'fileset': [ 'bin', 'include', 'mkspecs', # FIXME: mkspecs has large number of devices we will never use
+    { 'fileset': [ 'include', 'mkspecs', # FIXME: mkspecs has large number of devices we will never use
                    'lib/*.a', 'lib/*.la', 'lib/*.prl', 'lib/cmake', 'lib/pkgconfig', 'translations' ],
       'pkg_name': 'libqt5all-dev',
       'pkg_version': 0,
