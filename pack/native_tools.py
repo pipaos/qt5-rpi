@@ -69,7 +69,7 @@ packages=[
 ]
 
 
-def pack_tools(root_directory, source_directory, version_prefix, qt5_version, tools_directory, dry_run=False):
+def pack_tools(root_directory, source_directory, qt5_version, tools_directory, dry_run=False):
 
     complete_source='{}/{}'.format(root_directory, source_directory)
 
@@ -80,7 +80,6 @@ def pack_tools(root_directory, source_directory, version_prefix, qt5_version, to
 
     for pkg in packages:
 
-        pkg['pkg_name'] = '{}{}'.format(version_prefix, pkg['pkg_name']).strip()
         pkg['pkg_version'] = qt5_version
         pkg['fileset'] = [ tools_directory ]
 
