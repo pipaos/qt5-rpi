@@ -67,7 +67,7 @@ packages=[
 ]
 
 
-def pack_webengine(root_directory, source_directory, version_prefix, qt5_version, dry_run=False):
+def pack_webengine(root_directory, source_directory, qt5_version, dry_run=False):
 
     complete_source='{}/{}'.format(root_directory, source_directory)
 
@@ -78,7 +78,6 @@ def pack_webengine(root_directory, source_directory, version_prefix, qt5_version
 
     for pkg in packages:
 
-        pkg['pkg_name'] = '{}{}'.format(version_prefix, pkg['pkg_name']).strip()
         pkg['pkg_version'] = qt5_version
 
         # allocate a versioned directory name for the package
