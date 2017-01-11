@@ -154,8 +154,7 @@ class CompilerQt5(Builder):
             'Sysroot = {sysroot}\n' \
             'Prefix = {qt5_install_prefix}\n' \
             'HostPrefix= {sysroot}/{qt5_install_prefix}\n' \
-            'Binaries = {qt5_cross_binaries}\n' \
-            'HostBinaries = {qt5_cross_binaries}\n'.format(**self.config)
+            'HostBinaries = {qt5_install_prefix}/{qt5_cross_binaries}\n'.format(**self.config)
 
         if self.cross:
             command='cd {sources_directory} && sudo make install && ' \
