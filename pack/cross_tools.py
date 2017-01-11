@@ -10,13 +10,13 @@ import glob
 
 
 # This is Debian control file in a skeleton reusable block
-# FIXME: armh? these are cross compilation tools to run on x64
+# This package can be installed on the sysroot (armhf) and the host (Intel 64)
 control_skeleton='''
 Maintainer: Albert Casals <skarbat@gmail.com>
 Section: others
 Package: {pkg_name}
 Version: {pkg_version}
-Architecture: armhf
+Architecture: amd64
 Depends: debconf (>= 0.5.00), {pkg_depends}
 Priority: optional
 Description: {pkg_description}
@@ -32,12 +32,12 @@ packages=[
     { 'fileset': '',
       'pkg_name': 'libqt5all-cross-tools',
       'pkg_version': 0,
-      'pkg_depends': 'libqt5all-dev',
+      'pkg_depends': 'build-essential',
       'pkg_description': 'QT5 Cross compilation tools for Intel x64' }
 ]
 
 
-def pack_tools(root_directory, source_directory, qt5_version, tools_directory, dry_run=False):
+def pack_tools(root_directory, source_directory, qt5_version, tools_directory, cross_compiler, dry_run=False):
 
     complete_source='{}/{}'.format(root_directory, source_directory)
 
@@ -69,7 +69,7 @@ def pack_tools(root_directory, source_directory, qt5_version, tools_directory, d
                 os.makedirs(target_files_path)
 
             if not dry_run:
-                os.system('cp -rvP {} {}'.format(os.path.join(complete_source, files), target_files_path))
+                os.system('cp -rP {} {}'.format(os.path.join(complete_source, files), target_files_path))
 
         # create the Debian control file for "dpkg-deb" tool to know what to pack
         if not dry_run:
@@ -78,6 +78,16 @@ def pack_tools(root_directory, source_directory, qt5_version, tools_directory, d
                 os.makedirs(debian_dir)
             with open(os.path.join(debian_dir, 'control'), 'w') as control_file:
                 control_file.writelines(control_skeleton.format(**pkg))
+
+        # Package the cross compiler as well
+        cross_target_dir='{}/{}'.format(versioned_pkg_name, cross_compiler)
+        print 'Extracting cross compiler {} into {} ...'.format(cross_compiler, cross_target_dir)
+        if not dry_run:
+            if not os.path.isdir(cross_target_dir):
+                os.makedirs(cross_target_dir)
+
+            os.system('cp -rP {}/* {}'.format(cross_compiler, cross_target_dir))
+            os.system('find {} -iname \.git -exec rm -rfv \;'.format(cross_compiler))
 
         # finally call dpkg-deb and generate a debian package
         if not dry_run:

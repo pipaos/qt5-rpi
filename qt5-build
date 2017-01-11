@@ -145,6 +145,7 @@ if __name__ == '__main__':
                                    packager.config['qt5_install_prefix'],
                                    packager.config['qt5_debian_version'],
                                    packager.config['qt5_cross_binaries'],
+                                   '{rpi_tools}/{xgcc_path64}'.format(**packager.config).rstrip('/bin'),
                                    dry_run=True if args['--dry-run'] else False)
         elif args['native-tools']:
             native_tools.pack_tools(packager.config['sysroot'],
