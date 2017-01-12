@@ -57,7 +57,7 @@ packages=[
                    'lib/*.a', 'lib/*.la', 'lib/*.prl', 'lib/cmake', 'lib/pkgconfig', 'translations' ],
       'pkg_name': 'libqt5all-dev',
       'pkg_version': 0,
-      'pkg_depends': 'libqt5all, libraspberrypi-dev',
+      'pkg_depends': 'libqt5all, libqt5all-native-tools, libraspberrypi-dev',
       'pkg_description': 'All QT5 Development files' }
 ]
 
