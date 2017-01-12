@@ -60,7 +60,7 @@ packages=[
   
       'pkg_name': 'libqt5webengine-dev',
       'pkg_version': 0,
-      'pkg_depends': 'libqt5webengine',
+      'pkg_depends': 'libqt5all-dev, libqt5webengine',
       'pkg_description': 'QT5 WebEngine Libraries and basic tools'
   }
     

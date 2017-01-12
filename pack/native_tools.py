@@ -16,6 +16,7 @@ Maintainer: Albert Casals <skarbat@gmail.com>
 Section: others
 Package: {pkg_name}
 Version: {pkg_version}
+Conflicts: libqt5all-dev (<= 5.7-1)
 Architecture: armhf
 Depends: debconf (>= 0.5.00), {pkg_depends}
 Priority: optional
