@@ -193,8 +193,8 @@ class CompilerWebengine(Builder):
                 return os.WEXITSTATUS(os.system(cmd))
 
     def qmake(self):
-        qmake_cmd='{}; cd {}/qtwebengine && qmake ' \
-            'WEBENGINE_CONFIG+=use_proprietary_codecs CONFIG+={}'.format(
+        qmake_cmd='{}; cd {}/qtwebengine && qmake -r ' \
+            'WEBENGINE_CONFIG+=use_proprietary_codecs WEBENGINE_CONFIG+=embedded_build CONFIG+={}'.format(
                 self.config['qmake_env'],
                 self.config['sources_directory'],
                 'release' if self.release else 'debug')
