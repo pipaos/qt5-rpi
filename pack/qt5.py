@@ -31,7 +31,7 @@ Description: {pkg_description}
 # These are the X11 libraries on which QT5 depends on, provides XCB subsystem
 extra_deps = 'libx11-xcb1, libxcb-icccm4, libxcb-xfixes0, libxcb-image0, libxcb-keysyms1, libxcomposite1, ' \
     'libxcb-randr0, libxcb-render-util0, libxrender1, libxext6, libxcb-glx0, libfontconfig1, libxkbcommon0, ' \
-    'libinput10, libts-0.0-0, libjpeg62-turbo, libasound2, libproxy1, libicu52'
+    'libinput10, libts-0.0-0, libjpeg62-turbo, libasound2, libproxy1 | libproxy1v5, libicu52 | libicu57'
 
 # These are the packages we are building
 # For the moment we are collecting everyting in one single Debian pkg

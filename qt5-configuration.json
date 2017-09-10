@@ -1,6 +1,6 @@
 {
     "qt5_version": "5.9",
-    "qt5_debian_version": "5.9-1",
+    "qt5_debian_version": "5.9-2",
     "xsysroot_profile": "qt5build",
     "sysroot": "automatically filled",
     "systmp": "automatically filled",
