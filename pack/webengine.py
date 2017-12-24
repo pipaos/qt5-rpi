@@ -29,7 +29,7 @@ Description: {pkg_description}
 '''
 
 # Webengine extra core dependencies
-extra_deps=''
+extra_deps='libnss3'
 
 packages=[
 
@@ -45,7 +45,7 @@ packages=[
   
       'pkg_name': 'libqt5webengine',
       'pkg_version': 0,
-      'pkg_depends': 'libqt5all{}'.format(extra_deps),
+      'pkg_depends': 'libqt5all, {}'.format(extra_deps),
       'pkg_description': 'QT5 WebEngine Libraries and basic tools'
   },
 

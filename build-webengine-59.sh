@@ -29,7 +29,7 @@ sysexec "cp -fv /lib/arm-linux-gnueabihf/libm.so.6 /usr/lib/arm-linux-gnueabihf/
 
 # We build the clone from github, not the official QT repositories
 rm -rf qtwebengine
-git clone https://github.com/qt/qtwebengine.git
+git clone https://github.com/qt/qtwebengine.git -b 5.9.4
 cd qtwebengine
 git submodule update --init
 

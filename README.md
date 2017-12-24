@@ -1,13 +1,13 @@
-##QT5 RaspberryPI
+## QT5 RaspberryPI
 
 This project builds QT5 and QT Webengine debian packages for the RaspberryPI.
 
-###Requirements
+### Requirements
 
 You will need a powerful - 4 CPU or higher recommended-  Intel 64 bit computer with Debian Jessie.
 The additional software needed on the host will be installed by running `./host-bootstrap.py`.
 
-###Build
+### Build
 
 Build is separated in two stages.
 
@@ -23,16 +23,16 @@ On completion, the `pkgs` directory will contain the Debian files to publish on 
  * libqt5-native-tools.deb
  * libqt5-cross-tools.deb
 
-###Development
+### Development
 
 QT5 and Webenegine apps can be compiled using the packages above, in two different ways: native or cross compiled.
 
-####Native compilation
+#### Native compilation
 
 You will need a RaspberryPI or a Rasbian based sysroot. Install the `-dev` packages on the sysroot along
 with native tools package. Set your `PATH` to point to `/usr/local/qt5/bin`. You are now ready to build.
 
-####Cross compilation
+#### Cross compilation
 
 You will need a Debian Jessie x64 system and a Rasbian based sysroot. Run the command `host-bootstrap` on the host.
 Mount the sysroot image and install the `-dev` packages in it along with the cross tools package.
@@ -46,7 +46,7 @@ You might need to set the correct path to the sysroot in the file `/usr/local/qt
 
 You are now ready to cross build QT5 apps from the host.
 
-###References
+### References
 
  * https://github.com/CalumJEadie/part-ii-individual-project-dev/wiki/Project-Proposal-Research
  * https://wiki.qt.io/Building_Qt_5_from_Git
