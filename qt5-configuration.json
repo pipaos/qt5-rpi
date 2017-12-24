@@ -1,7 +1,7 @@
 {
-    "qt5_version": "5.9",
-    "qt5_debian_version": "5.9-2",
-    "xsysroot_profile": "qt5build",
+    "qt5_version": "5.10",
+    "qt5_debian_version": "5.10-1",
+    "xsysroot_profile": "pipa5",
     "sysroot": "automatically filled",
     "systmp": "automatically filled",
     "sources_directory": "automatically filled",
