@@ -23,7 +23,7 @@ function sysexec()
 if [ "$install_deps" == "1" ]; then
 
     # install dependencies on the sysroot image
-    DEPS="libqt5all-dev libicu-dev libasound-dev libdbus-1-dev libfontconfig1-dev libjpeg62-turbo-dev libnss3-dev libsystemd-dev"
+    DEPS="libqt5all-dev libicu-dev libasound-dev libdbus-1-dev libfontconfig1-dev libjpeg62-turbo-dev libnss3-dev libsystemd-dev libpng-dev"
     sysexec "apt-get install -y $DEPS"
 
     # fix relative symlinks otherwise the linker fails traversing the sysroot paths
@@ -46,8 +46,8 @@ git checkout 5.10
 git submodule update --init
 
 # More subtle hacks for a currently broken build
-export PKG_CONFIG=/tmp/pipa5/usr/lib/arm-linux-gnueabihf/pkgconfig
-export PKG_CONFIG_PATH=/tmp/pipa5/usr/lib/arm-linux-gnueabihf/pkgconfig
+export PKG_CONFIG=$(xsysroot -p $xsysroot_profile -q sysroot)/usr/lib/arm-linux-gnueabihf/pkgconfig
+export PKG_CONFIG_PATH=$PKG_CONFIG
 
 #
 # During linkge, a manual hack is needed:
@@ -60,6 +60,7 @@ export PKG_CONFIG_PATH=/tmp/pipa5/usr/lib/arm-linux-gnueabihf/pkgconfig
 # *  run "make" again
 #
 # Note that this version is currently buggy and you'll get graphical artifacts on complex websites
+# 
 #
 qmake WEBENGINE_CONFIG+=use_proprietary_codecs WEBENGINE_CONFIG+=embedded_build CONFIG+=release QMAKE_LFLAGS+="-lsystemd"
 make -j 8

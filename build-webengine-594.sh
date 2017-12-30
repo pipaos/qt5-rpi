@@ -46,13 +46,20 @@ git submodule update --init
 export PKG_CONFIG=$(xsysroot -p $xsysroot_profile -q sysroot)/usr/lib/arm-linux-gnueabihf/pkgconfig
 export PKG_CONFIG_PATH=$PKG_CONFIG
 
+# -lsystemd is a missing dependency that we hard code here.
+
 # We have to force the paths to locate the shared libraries (qmake $ORIG mysterious macro)
 QTLIBS="/usr/local/qt5/lib"
-qmake WEBENGINE_CONFIG+=use_proprietary_codecs WEBENGINE_CONFIG+=embedded_build "QMAKE_LFLAGS+=-Wl,-rpath,$QTLIBS"
+qmake WEBENGINE_CONFIG+=use_proprietary_codecs WEBENGINE_CONFIG+=embedded_build "QMAKE_LFLAGS+=-Wl,-rpath,$QTLIBS" QMAKE_LFLAGS+="-lsystemd"
 
-# If the link stage fails with "undefined reference to `sd_listen_fds'"
-# Hack src/core/Makefile.core_module to add "-lsystemd" into the LIBS macro
-# Then run make and sudo make install manually.
+#
+# This version fails if attached to qt wayland with:
+#
+# Using Brcm-EGL
+# [1071:1094:1230/150811.969112:ERROR:gl_surface_qt.cpp(371)] GLContextHelper::getEGLDisplay() failed.
+# Using the 'wl-shell' shell integration
+# [1071:1094:1230/150812.220696:ERROR:gl_surface_qt.cpp(667)] Requested OpenGL implementation is not supported. Implementation: 0
+#
 
 # Consider using -j X, as it can takes ages
 # 3 hours to link the liqt5webengine.so object alone on a single core host!
